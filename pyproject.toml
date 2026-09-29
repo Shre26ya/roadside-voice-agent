@@ -1,0 +1,8 @@
+[project]
+name = "roadside-voice-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+uv add "livekit-agents[deepgram,cartesia,anthropic,silero,turn-detector]" python-dotenv
