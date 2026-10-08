@@ -1,0 +1,14 @@
+[
+    {"name": "empty_call_asks_name", "state": {}, "expect": "ask"},
+    {"name": "name_only_asks_location", "state": {"caller_name": "Shreya"}, "expect": "ask"},
+    {"name": "four_fields_asks_safety", "state": {"caller_name": "Shreya", "location": "Journal Square", "vehicle": "blue Civic", "issue": "flat tire"}, "expect": "ask"},
+    {"name": "all_fields_readback", "state": {"caller_name": "Shreya", "location": "Journal Square", "vehicle": "blue Civic", "issue": "flat tire", "is_safe": true}, "expect": "readback"},
+    {"name": "confirmed_dispatches", "state": {"caller_name": "Shreya", "location": "Journal Square", "vehicle": "blue Civic", "issue": "flat tire", "is_safe": true, "confirmed": true}, "expect": "dispatch"},
+    {"name": "dispatched_is_done", "state": {"caller_name": "Shreya", "location": "Journal Square", "vehicle": "blue Civic", "issue": "flat tire", "is_safe": true, "confirmed": true, "dispatched": true}, "expect": "done"},
+    {"name": "unsafe_caller_handoff", "state": {"caller_name": "Shreya", "location": "Route 22", "vehicle": "blue Civic", "issue": "accident", "is_safe": false}, "expect": "handoff"},
+    {"name": "handoff_requested_midway", "state": {"caller_name": "Shreya", "handoff_requested": true}, "expect": "handoff"},
+    {"name": "handoff_failed_continues", "state": {"caller_name": "Shreya", "handoff_requested": true, "handoff_failed": true}, "expect": "ask"},
+    {"name": "sentence_as_name_reasks", "state": {"caller_name": "I just got into an accident on the highway"}, "expect": "reask"},
+    {"name": "short_location_reasks", "state": {"caller_name": "Shreya", "location": "NJ"}, "expect": "reask"},
+    {"name": "no_dispatch_without_confirm", "state": {"caller_name": "Shreya", "location": "Journal Square", "vehicle": "blue Civic", "issue": "flat tire", "is_safe": true, "confirmed": false}, "expect": "readback"}
+  ]
