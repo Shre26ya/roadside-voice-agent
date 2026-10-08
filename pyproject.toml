@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "langgraph>=1.2.14",
     "livekit-agents[anthropic,cartesia,deepgram,silero,turn-detector]>=1.8.5",
     "python-dotenv>=1.2.4",
 ]
