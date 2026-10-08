@@ -8,6 +8,7 @@ dependencies = [
     "langgraph>=1.2.14",
     "livekit-agents[anthropic,cartesia,deepgram,silero,turn-detector]>=1.8.5",
     "python-dotenv>=1.2.4",
+    "rank-bm25>=0.2.2",
 ]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

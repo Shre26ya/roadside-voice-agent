@@ -70,3 +70,16 @@ async def test_unsafe_caller_triggers_handoff_attempt():
         await session.run(user_input="No, I'm standing on the shoulder next to traffic")
         assert agent.record.is_safe is False
         assert agent.record.handoff_requested is True, "unsafe caller did not trigger transfer_to_human"
+
+@pytest.mark.asyncio
+async def test_coverage_question_uses_rag():
+    async with AgentSession(llm=anthropic.LLM(model=LLM)) as session:
+        agent = Dispatcher()
+        await session.start(agent)
+        await session.run(user_input="Shreya")
+        result = await session.run(user_input="Before I continue, is a tow free with my membership?")
+        result.expect.contains_function_call(name="lookup_coverage")
+        await (
+            result.expect.contains_message(role="assistant")
+            .judge(JUDGE, intent="States that one tow per incident is free up to 15 miles")
+        )

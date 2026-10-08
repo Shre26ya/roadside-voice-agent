@@ -10,6 +10,7 @@ from livekit.agents import Agent, AgentSession, RunContext, function_tool
 from livekit.plugins import anthropic, cartesia, deepgram, silero
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
+import retrieval
 from intake_graph import advance
 
 load_dotenv()
@@ -27,9 +28,11 @@ Speak in short, calm sentences. Ask one question at a time.
 
 Every tool returns a line starting with NEXT. Always follow that NEXT instruction.
 If the caller says two things in one turn, call a tool for each.
+If the caller goes off topic, decline in one sentence and return to the current question.
 
 Tools:
 - set_caller_name, set_location, set_vehicle, set_issue, set_safety: call as soon as you learn each detail
+- lookup_coverage: call when the caller asks whether something is covered or what it costs. Never guess coverage.
 - confirm_details: call when the caller says the read-back is correct
 - confirm_and_dispatch: call only when a NEXT instruction tells you to
 - transfer_to_human: call when the caller asks for a person or a NEXT instruction tells you to
@@ -99,6 +102,16 @@ class Dispatcher(Agent):
         return self._advance()
 
     @function_tool()
+    async def lookup_coverage(self, context: RunContext, question: str) -> str:
+        """Look up what QuickTow covers. Use when the caller asks about cost, coverage, or what is included."""
+        hits = retrieval.search(question)
+        log.info("tool lookup_coverage q=%s hits=%s", question, [t for t, _ in hits])
+        if not hits:
+            return "No coverage information found. Tell the caller a dispatcher will confirm, then " + self._advance()
+        body = "\n\n".join(text for _, text in hits)
+        return f"Coverage info:\n{body}\nAnswer only from this, then " + self._advance()
+
+    @function_tool()
     async def confirm_details(self, context: RunContext) -> str:
         """Call when the caller confirms the read-back is correct."""
         self.record.confirmed = True
@@ -147,4 +160,5 @@ async def entrypoint(ctx: agents.JobContext):
 
 
 if __name__ == "__main__":
+    retrieval.load()
     agents.cli.run_app(agents.WorkerOptions(entrypoint_fnc=entrypoint, agent_name="roadside"))
